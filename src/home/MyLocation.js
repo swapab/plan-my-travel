@@ -7,25 +7,6 @@ export default class MyLocation extends Component {
         location: ''
     };
 
-    reverseGeocode = () => {
-        fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${
-                this.state.longitude
-            }&lon=${this.state.longitude}`
-        )
-            .then(function(response) {
-                console.log(response.json().resolve);
-                console.log('state', response.state);
-                console.log('country', response.country);
-                // this.setState({
-                //     location: `${response.state}, ${response.country}`
-                // });
-            })
-            .then(function(error) {
-                console.log(error);
-            });
-    };
-
     componentDidMount() {
         /* geolocation is available */
         if ('geolocation' in navigator) {
@@ -33,7 +14,7 @@ export default class MyLocation extends Component {
             if (location) {
                 location.getCurrentPosition(
                     position => {
-                        console.log(position.coords);
+                        console.log('position.coords', position.coords);
                         this.setState(
                             {
                                 longitude: position.coords.longitude,
@@ -49,8 +30,6 @@ export default class MyLocation extends Component {
                     }
                 );
             }
-
-            console.log('state', this.state);
         } else {
             this.setState({
                 location: 'geolocation error'
@@ -58,6 +37,28 @@ export default class MyLocation extends Component {
             /* geolocation IS NOT available */
         }
     }
+
+    reverseGeocode = () => {
+        fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${
+            this.state.latitude
+            }&lon=${this.state.longitude}`
+        )
+            .then((response) => {
+                return response.json();
+            }).then(data => {
+                console.log('data', data.address)
+
+                this.setState({
+                    location: `${data.address.city}, ${data.address.country}`
+                });
+            })
+            .catch(error => {
+                this.setState({
+                    location: 'geolocation error'
+                });
+            })
+    };
 
     render() {
         return (
