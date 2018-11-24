@@ -8,7 +8,7 @@ describe('<MyLocation />', () => {
             global.fetch = jest.fn().mockImplementation(() => {
                 var p = new Promise((resolve, reject) => {
                     resolve({
-                        state: 'Berlin',
+                        city: 'Berlin',
                         country: 'Germany'
                     });
                 });
