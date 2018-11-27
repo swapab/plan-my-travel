@@ -3,29 +3,34 @@ import { render } from 'react-testing-library';
 import MyLocation from './MyLocation';
 
 describe('<MyLocation />', () => {
-    describe('geolocation is available', () => {
-        beforeEach(() => {
-            global.fetch = jest.fn().mockImplementation(() => {
-                var p = new Promise((resolve, reject) => {
-                    resolve({
-                        city: 'Berlin',
-                        country: 'Germany'
-                    });
-                });
-
-                return p;
-            });
+  describe('geolocation is available', () => {
+    beforeEach(() => {
+      global.fetch = jest.fn().mockImplementation(() => {
+        var p = new Promise((resolve, reject) => {
+          resolve({
+            address: {
+              city: 'Berlin',
+              country: 'Germany'
+            }
+          });
+        });
+        var response = new Promise((resolve, reject) => {
+          resolve(p);
         });
 
-        it('should render with current location', () => {
-            // Arrange
-            const { getByTestId } = render(<MyLocation />);
-
-            // Act
-            const myLocation = getByTestId('my-current-location');
-
-            // Assert
-            expect(myLocation.defaultValue).toContain('Berlin, Germany');
-        });
+        return response;
+      });
     });
+
+    it('should render with current location', () => {
+      // Arrange
+      const { getByTestId } = render(<MyLocation />);
+
+      // Act
+      const myLocation = getByTestId('my-current-location');
+
+      // Assert
+      expect(myLocation.defaultValue).toContain('Berlin, Germany');
+    });
+  });
 });
